@@ -1,0 +1,43 @@
+<!-- templates/index.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container text-center">
+    <h1>Welcome to Calculator Store</h1>
+    <p class="lead">Find the best calculators for students, engineers, and professionals.</p>
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <img src="https://besharp.co.za/wp-content/uploads/2019/02/EL-535SA.jpg" class="card-img-top" alt="Calculator 1">
+                <div class="card-body">
+                    <h5 class="card-title">Best Scientific Calculator</h5>
+                    <p class="card-text">Perfect for students and engineers.</p>
+                    <a href="https://besharp.co.za/why-the-sharp-el-w535sa-is-the-best-scientific-calculator-for-south-african-schools/" class="btn btn-primary">Buy Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <img src="https://cdn.mos.cms.futurecdn.net/AC58iwtSZuJrHKFNRLhxeC-970-80.jpg.webp" class="card-img-top" alt="Calculator 2">
+                <div class="card-body">
+                    <h5 class="card-title">Graphing Calculator</h5>
+                    <p class="card-text">Advanced functions for graphing and scientific calculations.</p>
+                    <a href="https://www.techradar.com/news/best-graphing-calculator-2020" class="btn btn-primary">Buy Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <img src="https://www.casio.com/content/casio/locales/intl/en/products/basic-calculators/practical/_jcr_content/root/responsivegrid/teaser.casiocoreimg.jpeg/1649037107839/8-practical-cal-1920-612.jpeg" class="card-img-top" alt="Calculator 3">
+                <div class="card-body">
+                    <h5 class="card-title">Basic Calculator</h5>
+                    <p class="card-text">Simple and easy-to-use calculator for everyday needs.</p>
+                    <a href="https://www.casio.com/intl/basic-calculators/practical/" class="btn btn-primary">Buy Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
