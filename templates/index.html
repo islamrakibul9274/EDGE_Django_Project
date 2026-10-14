@@ -1,43 +1,44 @@
-<!-- templates/index.html -->
 {% extends 'base.html' %}
 {% block content %}
-<div class="container text-center">
-    <h1>Welcome to Calculator Store</h1>
-    <p class="lead">Find the best calculators for students, engineers, and professionals.</p>
+<div class="text-center mb-4">
+    <h1>Find the Right Calculator Faster</h1>
+    <p class="lead">Browse, compare, and get recommendations for student and professional calculators.</p>
+    <a href="{% url 'calculator_list' %}" class="btn btn-primary me-2">Browse Catalog</a>
+    <a href="{% url 'recommender_quiz' %}" class="btn btn-outline-primary">Take Recommender Quiz</a>
+</div>
 
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card">
-                <img src="https://besharp.co.za/wp-content/uploads/2019/02/EL-535SA.jpg" class="card-img-top" alt="Calculator 1">
-                <div class="card-body">
-                    <h5 class="card-title">Best Scientific Calculator</h5>
-                    <p class="card-text">Perfect for students and engineers.</p>
-                    <a href="https://besharp.co.za/why-the-sharp-el-w535sa-is-the-best-scientific-calculator-for-south-african-schools/" class="btn btn-primary">Buy Now</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card">
-                <img src="https://cdn.mos.cms.futurecdn.net/AC58iwtSZuJrHKFNRLhxeC-970-80.jpg.webp" class="card-img-top" alt="Calculator 2">
-                <div class="card-body">
-                    <h5 class="card-title">Graphing Calculator</h5>
-                    <p class="card-text">Advanced functions for graphing and scientific calculations.</p>
-                    <a href="https://www.techradar.com/news/best-graphing-calculator-2020" class="btn btn-primary">Buy Now</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card">
-                <img src="https://www.casio.com/content/casio/locales/intl/en/products/basic-calculators/practical/_jcr_content/root/responsivegrid/teaser.casiocoreimg.jpeg/1649037107839/8-practical-cal-1920-612.jpeg" class="card-img-top" alt="Calculator 3">
-                <div class="card-body">
-                    <h5 class="card-title">Basic Calculator</h5>
-                    <p class="card-text">Simple and easy-to-use calculator for everyday needs.</p>
-                    <a href="https://www.casio.com/intl/basic-calculators/practical/" class="btn btn-primary">Buy Now</a>
-                </div>
+<h3 class="mt-4">Featured</h3>
+<div class="row g-3">
+    {% for post in featured %}
+    <div class="col-md-4">
+        <div class="card h-100">
+            {% if post.image_file %}<img src="{{ post.image_file.url }}" class="card-img-top" alt="{{ post.title }}" loading="lazy">{% elif post.image %}<img src="{{ post.image }}" class="card-img-top" alt="{{ post.title }}" loading="lazy">{% endif %}
+            <div class="card-body">
+                <h5>{{ post.title }}</h5>
+                <p class="text-muted mb-1">{{ post.brand }} • {{ post.get_category_display }}</p>
+                <p><strong>${{ post.price }}</strong>{% if post.discount_percentage %} <small class="text-danger">-{{ post.discount_percentage }}%</small>{% endif %}</p>
+                <a class="btn btn-sm btn-primary" href="{% url 'calculator_detail' post.slug %}">View Details</a>
             </div>
         </div>
     </div>
+    {% empty %}<p>No featured products yet.</p>{% endfor %}
+</div>
+
+<h3 class="mt-4">New Arrivals</h3>
+<div class="row g-3">
+    {% for post in new_arrivals %}
+    <div class="col-md-4">
+        <div class="card h-100"><div class="card-body"><h5>{{ post.title }}</h5><p class="text-muted">{{ post.brand }}</p><p><strong>${{ post.price }}</strong></p><a class="btn btn-sm btn-outline-primary" href="{% url 'calculator_detail' post.slug %}">View</a></div></div>
+    </div>
+    {% empty %}<p>No new arrivals.</p>{% endfor %}
+</div>
+
+<h3 class="mt-4">Best Value</h3>
+<div class="row g-3">
+    {% for post in best_value %}
+    <div class="col-md-4">
+        <div class="card h-100"><div class="card-body"><h5>{{ post.title }}</h5><p class="text-muted">{{ post.brand }}</p><p><strong>${{ post.price }}</strong> • ⭐ {{ post.rating }}</p><a class="btn btn-sm btn-outline-primary" href="{% url 'calculator_detail' post.slug %}">View</a></div></div>
+    </div>
+    {% empty %}<p>No best value picks.</p>{% endfor %}
 </div>
 {% endblock %}

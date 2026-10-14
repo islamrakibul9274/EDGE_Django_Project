@@ -1,25 +1,59 @@
-<!-- templates/blog.html -->
 {% extends 'base.html' %}
 {% block content %}
-<div class="container">
-    <h1 class="text-center">Latest Calculators</h1>
+<h1 class="mb-3">Calculator Catalog</h1>
 
-    <div class="row mt-4">
-        {% for post in posts %}
-        <div class="col-md-4">
-            <div class="card mb-3">
-                <img src="{{ post.image }}" class="card-img-top" alt="Calculator Image">
-                <div class="card-body">
-                    <h5 class="card-title">{{ post.title }}</h5>
-                    <p class="card-text">{{ post.description|truncatewords:20 }}</p>
-                    <p class="card-text"><strong>Price: ${{ post.price }}</strong></p>
-                    <a href="{{ post.buy_url }}" class="btn btn-primary" target="_blank">Buy Now</a>
-                </div>
+<form method="get" class="row g-2 mb-4">
+    <div class="col-md-3"><input class="form-control" type="text" name="q" placeholder="Search" value="{{ selected.q }}"></div>
+    <div class="col-md-2">
+        <select class="form-select" name="category">
+            <option value="">All categories</option>
+            {% for value, label in categories %}<option value="{{ value }}" {% if selected.category == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select class="form-select" name="brand">
+            <option value="">All brands</option>
+            {% for b in brands %}<option value="{{ b }}" {% if selected.brand == b %}selected{% endif %}>{{ b }}</option>{% endfor %}
+        </select>
+    </div>
+    <div class="col-md-1"><input class="form-control" type="number" step="0.01" name="min_price" placeholder="Min" value="{{ selected.min_price }}"></div>
+    <div class="col-md-1"><input class="form-control" type="number" step="0.01" name="max_price" placeholder="Max" value="{{ selected.max_price }}"></div>
+    <div class="col-md-2">
+        <select class="form-select" name="sort">
+            <option value="newest" {% if selected.sort == 'newest' %}selected{% endif %}>Newest</option>
+            <option value="price_asc" {% if selected.sort == 'price_asc' %}selected{% endif %}>Price Low-High</option>
+            <option value="price_desc" {% if selected.sort == 'price_desc' %}selected{% endif %}>Price High-Low</option>
+            <option value="rating" {% if selected.sort == 'rating' %}selected{% endif %}>Top Rated</option>
+            <option value="trending" {% if selected.sort == 'trending' %}selected{% endif %}>Trending</option>
+        </select>
+    </div>
+    <div class="col-md-1"><button class="btn btn-primary w-100" type="submit">Apply</button></div>
+</form>
+
+<div class="row g-3">
+    {% for post in posts %}
+    <div class="col-md-4">
+        <div class="card h-100">
+            {% if post.image_file %}<img src="{{ post.image_file.url }}" class="card-img-top" alt="{{ post.title }}" loading="lazy">{% elif post.image %}<img src="{{ post.image }}" class="card-img-top" alt="{{ post.title }}" loading="lazy">{% endif %}
+            <div class="card-body">
+                <h5>{{ post.title }}</h5>
+                <p class="mb-1">{{ post.brand }} • {{ post.get_category_display }}</p>
+                <p class="mb-1">⭐ {{ post.rating }} | {{ post.get_stock_status_display }}</p>
+                <p class="mb-2"><strong>${{ post.price }}</strong> {% if post.original_price %}<small class="text-muted text-decoration-line-through">${{ post.original_price }}</small>{% endif %}</p>
+                <p>{% for badge in post.promotional_badges %}<span class="badge badge-soft">{{ badge }}</span>{% endfor %}</p>
+                <a href="{% url 'calculator_detail' post.slug %}" class="btn btn-sm btn-primary">Details</a>
+                <a href="{% url 'buy_now_redirect' post.slug %}?source=catalog&page=list" class="btn btn-sm btn-outline-success">Buy Now</a>
             </div>
         </div>
-        {% empty %}
-        <p class="text-center">No calculator listings available.</p>
-        {% endfor %}
     </div>
+    {% empty %}<p>No calculators found.</p>{% endfor %}
 </div>
+
+<nav class="mt-4">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}">Previous</a></li>{% endif %}
+        <li class="page-item active"><span class="page-link">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+        {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a></li>{% endif %}
+    </ul>
+</nav>
 {% endblock %}

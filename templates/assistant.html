@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>AI Calculator Assistant</h1>
+<form method="post" class="row g-3">{% csrf_token %}
+    <div class="col-md-4"><input class="form-control" type="number" step="0.01" name="budget" placeholder="Budget (optional)"></div>
+    <div class="col-md-8"><input class="form-control" type="text" name="question" placeholder="Ask: best calculator for engineering under 100" required></div>
+    <div class="col-12"><button class="btn btn-primary" type="submit">Ask Assistant</button></div>
+</form>
+
+{% if answer %}<div class="alert alert-info mt-4">{{ answer }}</div>{% endif %}
+{% endblock %}
