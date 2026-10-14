@@ -94,6 +94,12 @@ LOGGING = {
     },
 }
 
+AFFILIATE_ALLOWED_DOMAINS = [
+    domain.strip().lower()
+    for domain in os.getenv("DJANGO_AFFILIATE_ALLOWED_DOMAINS", "example.com").split(",")
+    if domain.strip()
+]
+
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
 

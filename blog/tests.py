@@ -62,7 +62,8 @@ class CatalogViewTests(TestCase):
 
     def test_buy_redirect_tracks_click(self):
         response = self.client.get(reverse("buy_now_redirect", args=[self.calc.slug]))
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Continue to Store")
         self.assertEqual(AffiliateClick.objects.count(), 1)
         self.calc.refresh_from_db()
         self.assertEqual(self.calc.click_count, 1)

@@ -1,12 +1,16 @@
 from decimal import Decimal
+from urllib.parse import urlparse
 
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from django.core.paginator import Paginator
 from django.db.models import F, Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from .forms import BackInStockForm, NewsletterForm, PriceAlertForm, RegisterForm, ReviewForm
 from .models import (
@@ -174,7 +178,10 @@ def subscribe_newsletter(request):
             messages.success(request, "Subscribed to newsletter.")
         else:
             messages.error(request, "Invalid email address.")
-    return redirect(request.META.get("HTTP_REFERER", "home"))
+    referer = request.META.get("HTTP_REFERER", "")
+    if url_has_allowed_host_and_scheme(referer, allowed_hosts=set(settings.ALLOWED_HOSTS)):
+        return redirect(referer)
+    return redirect(reverse("home"))
 
 
 def subscribe_back_in_stock(request, slug):
@@ -244,6 +251,16 @@ def save_comparison(request):
 
 def buy_now_redirect(request, slug):
     calculator = get_object_or_404(CalculatorPost, slug=slug)
+    parsed_url = urlparse(calculator.buy_url)
+    allowed_domains = settings.AFFILIATE_ALLOWED_DOMAINS
+    domain_ok = parsed_url.scheme in {"http", "https"} and parsed_url.netloc and any(
+        parsed_url.netloc.lower().endswith(domain) for domain in allowed_domains
+    )
+
+    if not domain_ok:
+        messages.error(request, "This affiliate link is not allowed.")
+        return redirect("calculator_detail", slug=calculator.slug)
+
     AffiliateClick.objects.create(
         calculator=calculator,
         user=request.user if request.user.is_authenticated else None,
@@ -251,7 +268,16 @@ def buy_now_redirect(request, slug):
         page=request.GET.get("page", "catalog"),
     )
     CalculatorPost.objects.filter(pk=calculator.pk).update(click_count=F("click_count") + 1)
-    return redirect(calculator.buy_url)
+    return render(
+        request,
+        "redirect_out.html",
+        {
+            "destination_url": calculator.buy_url,
+            "calculator": calculator,
+            "seo_title": f"Continue to {calculator.brand}",
+            "seo_description": f"Continue to external store for {calculator.title}.",
+        },
+    )
 
 
 def article_list(request):
