@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Calculator Recommender Quiz</h1>
+<form method="post" class="row g-3">{% csrf_token %}
+    <div class="col-md-4">
+        <label class="form-label">Use case</label>
+        <select class="form-select" name="use_case">
+            <option value="student">Student</option>
+            <option value="exam">Exam prep</option>
+            <option value="finance">Finance</option>
+            <option value="engineering">Engineering</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Budget</label>
+        <select class="form-select" name="budget">
+            <option value="low">Under $50</option>
+            <option value="mid">Under $120</option>
+            <option value="high">Any budget</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Need graphing?</label>
+        <select class="form-select" name="graphing">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+        </select>
+    </div>
+    <div class="col-12"><button class="btn btn-primary" type="submit">Get Recommendation</button></div>
+</form>
+
+{% if recommendation %}
+<div class="alert alert-success mt-4">
+    <h5>Recommended: {{ recommendation.title }}</h5>
+    <p class="mb-1">{{ recommendation.brand }} • ${{ recommendation.price }} • ⭐ {{ recommendation.rating }}</p>
+    <a class="btn btn-sm btn-success" href="{% url 'calculator_detail' recommendation.slug %}">View Product</a>
+</div>
+{% endif %}
+{% endblock %}

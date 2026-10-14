@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Buying Guides & Articles</h1>
+<div class="row g-3">
+{% for article in articles %}
+    <div class="col-md-6">
+        <div class="card h-100"><div class="card-body">
+            <h4>{{ article.title }}</h4>
+            <p>{{ article.summary|truncatewords:30 }}</p>
+            <a class="btn btn-sm btn-primary" href="{% url 'article_detail' article.slug %}">Read More</a>
+        </div></div>
+    </div>
+{% empty %}
+    <p>No articles published yet.</p>
+{% endfor %}
+</div>
+{% endblock %}

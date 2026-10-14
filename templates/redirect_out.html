@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="text-center py-5">
+    <h1>Leaving Calculator Store</h1>
+    <p>You are about to visit an external affiliate site for <strong>{{ calculator.title }}</strong>.</p>
+    <a class="btn btn-success" href="{{ destination_url }}" rel="noopener noreferrer nofollow" target="_blank">Continue to Store</a>
+    <a class="btn btn-outline-secondary" href="{% url 'calculator_detail' calculator.slug %}">Cancel</a>
+</div>
+{% endblock %}

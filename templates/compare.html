@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Compare Calculators</h1>
+<form class="row g-2 mb-3" method="get">
+    <div class="col-md-9">
+        <select name="compare" class="form-select" multiple size="8">
+            {% for c in all_calculators %}
+                <option value="{{ c.slug }}" {% if c in calculators %}selected{% endif %}>{{ c.title }} ({{ c.brand }})</option>
+            {% endfor %}
+        </select>
+        <small>Select up to 3 calculators (Ctrl/Cmd+click).</small>
+    </div>
+    <div class="col-md-3">
+        <button class="btn btn-primary w-100" type="submit">Compare</button>
+    </div>
+</form>
+
+{% if calculators %}
+<form method="post" action="{% url 'save_comparison' %}" class="mb-4">
+    {% csrf_token %}
+    <input type="hidden" name="name" value="Saved comparison">
+    {% for c in calculators %}<input type="hidden" name="compare" value="{{ c.slug }}">{% endfor %}
+    {% if user.is_authenticated %}<button type="submit" class="btn btn-outline-secondary">Save Comparison</button>{% else %}<p><a href="{% url 'login' %}">Login</a> to save comparison.</p>{% endif %}
+</form>
+
+<div class="table-responsive">
+<table class="table table-bordered">
+    <thead><tr><th>Specification</th>{% for c in calculators %}<th>{{ c.title }}</th>{% endfor %}</tr></thead>
+    <tbody>
+        <tr><th>Brand</th>{% for c in calculators %}<td>{{ c.brand }}</td>{% endfor %}</tr>
+        <tr><th>Category</th>{% for c in calculators %}<td>{{ c.get_category_display }}</td>{% endfor %}</tr>
+        <tr><th>Price</th>{% for c in calculators %}<td>${{ c.price }}</td>{% endfor %}</tr>
+        <tr><th>Rating</th>{% for c in calculators %}<td>{{ c.rating }}</td>{% endfor %}</tr>
+        <tr><th>Stock</th>{% for c in calculators %}<td>{{ c.get_stock_status_display }}</td>{% endfor %}</tr>
+        <tr><th>Buy</th>{% for c in calculators %}<td><a class="btn btn-sm btn-success" href="{% url 'buy_now_redirect' c.slug %}?source=compare&page=compare">Buy</a></td>{% endfor %}</tr>
+    </tbody>
+</table>
+</div>
+{% endif %}
+{% endblock %}
